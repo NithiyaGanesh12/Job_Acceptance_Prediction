@@ -1,0 +1,6 @@
+from pathlib import Path
+import joblib,pandas as pd,streamlit as st
+ROOT=Path(__file__).resolve().parent; B=joblib.load(ROOT/'models/job_acceptance_model.pkl'); model=B['model']; features=B['features']; st.title('Job Acceptance Prediction')
+age=st.number_input('Age',18,70,28); exp=st.number_input('Experience',0,40,5); cur=st.number_input('Current Salary',0.0,1000000.0,45000.0); offer=st.number_input('Offered Salary',0.0,1000000.0,60000.0); edu=st.selectbox('Education',['B.Tech','MCA','B.Sc','MBA','M.Tech']); role=st.selectbox('Job Role',['Software Developer','Data Analyst','Software Tester','Web Developer','Project Manager','Data Scientist']); loc=st.selectbox('Location',['Chennai','Coimbatore','Bangalore','Hyderabad','Pune']); mode=st.selectbox('Work Mode',['Remote','Hybrid','Office']); rel=st.selectbox('Relocation',['Yes','No']); growth=st.selectbox('Career Growth',['High','Medium','Low'])
+if st.button('Predict'):
+ row=pd.DataFrame([{'age':age,'experience':exp,'current_salary':cur,'offered_salary':offer,'education':edu,'job_role':role,'location':loc,'work_mode':mode,'relocation':rel,'career_growth':growth}]); row=pd.get_dummies(row).reindex(columns=features,fill_value=0).astype(float); p=int(model.predict(row)[0]); st.success('Prediction: '+('Accepted' if p else 'Rejected')); st.write(f'Probability: {model.predict_proba(row)[0][p]:.2%}')

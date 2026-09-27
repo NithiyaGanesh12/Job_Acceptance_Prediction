@@ -1,0 +1,3 @@
+from pathlib import Path
+import pandas as pd,joblib
+ROOT=Path(__file__).resolve().parents[1]; B=joblib.load(ROOT/'models/job_acceptance_model.pkl'); model=B['model']; features=B['features']; row=pd.DataFrame([{'age':28,'experience':5,'current_salary':45000,'offered_salary':60000,'education':'MCA','job_role':'Data Analyst','location':'Chennai','work_mode':'Hybrid','relocation':'Yes','career_growth':'High'}]); row=pd.get_dummies(row).reindex(columns=features,fill_value=0).astype(float); p=int(model.predict(row)[0]); print('Predicted Job Acceptance:', 'Accepted' if p else 'Rejected'); print('Probability:',f'{model.predict_proba(row)[0][p]:.2%}')
